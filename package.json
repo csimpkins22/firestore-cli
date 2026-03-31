@@ -1,6 +1,6 @@
 {
   "name": "@csimpkins22/firestore-cli",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A clean, read-only CLI for exploring Firestore databases.",
   "type": "module",
   "bin": {
