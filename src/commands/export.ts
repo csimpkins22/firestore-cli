@@ -9,7 +9,7 @@ import {
   type QueryFlags,
 } from "../cli/options.js";
 import { resolveProfile } from "../core/config.js";
-import { createFirestoreClient, runQuery } from "../core/firestore.js";
+import { createFirestoreClient, runCollectionGroupQuery, runQuery } from "../core/firestore.js";
 import { writeExport } from "../core/output.js";
 
 interface ExportFlags extends QueryFlags {
@@ -20,8 +20,9 @@ export function registerExportCommands(program: Command): void {
   program
     .command("export")
     .description("Export Firestore query results as JSON")
-    .argument("<collectionPath>", "Collection path to export")
+    .argument("<collectionPath>", "Collection path (or collection ID with --collection-group)")
     .requiredOption("--out <file|->", "Output file path or - for stdout")
+    .option("--collection-group", "Query across all collections with this ID")
     .option("--where <field,op,value>", "Firestore where clause", collectOption, [])
     .option("--order-by <field[:asc|desc]>", "Firestore orderBy clause", collectOption, [])
     .option("--limit <n>", "Limit the number of returned documents", parseNumber)
@@ -31,7 +32,9 @@ export function registerExportCommands(program: Command): void {
       const options = getGlobalOptions(command);
       const { profile } = await resolveProfile(options.profile);
       const firestore = createFirestoreClient(profile);
-      const documents = await runQuery(
+
+      const queryFn = flags.collectionGroup ? runCollectionGroupQuery : runQuery;
+      const documents = await queryFn(
         firestore,
         collectionPath,
         flags.where.map(parseWhereClause),

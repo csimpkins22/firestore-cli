@@ -9,6 +9,7 @@ export interface GlobalCliOptions {
 }
 
 export interface QueryFlags {
+  collectionGroup?: boolean;
   limit?: number;
   offset?: number;
   orderBy: string[];

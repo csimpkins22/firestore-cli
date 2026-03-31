@@ -9,14 +9,15 @@ import {
   type QueryFlags,
 } from "../cli/options.js";
 import { resolveProfile } from "../core/config.js";
-import { createFirestoreClient, runQuery } from "../core/firestore.js";
+import { createFirestoreClient, runCollectionGroupQuery, runQuery } from "../core/firestore.js";
 import { renderQueryResults } from "../core/output.js";
 
 export function registerQueryCommands(program: Command): void {
   program
     .command("query")
     .description("Run a read-only Firestore query against a collection")
-    .argument("<collectionPath>", "Collection path to query")
+    .argument("<collectionPath>", "Collection path (or collection ID with --collection-group)")
+    .option("--collection-group", "Query across all collections with this ID")
     .option("--where <field,op,value>", "Firestore where clause", collectOption, [])
     .option("--order-by <field[:asc|desc]>", "Firestore orderBy clause", collectOption, [])
     .option("--limit <n>", "Limit the number of returned documents", parseNumber)
@@ -26,7 +27,9 @@ export function registerQueryCommands(program: Command): void {
       const options = getGlobalOptions(command);
       const { profile } = await resolveProfile(options.profile);
       const firestore = createFirestoreClient(profile);
-      const documents = await runQuery(
+
+      const queryFn = flags.collectionGroup ? runCollectionGroupQuery : runQuery;
+      const documents = await queryFn(
         firestore,
         collectionPath,
         flags.where.map(parseWhereClause),

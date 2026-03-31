@@ -108,6 +108,28 @@ export async function runQuery(
   return snapshot.docs.map(serializeDocument);
 }
 
+export async function runCollectionGroupQuery(
+  firestore: Firestore,
+  collectionId: string,
+  where: ParsedWhere[],
+  orderBy: ParsedOrderBy[],
+  limit?: number,
+  offset?: number,
+  select?: string[],
+): Promise<SerializedDocument[]> {
+  const query = applyQueryOptions(
+    firestore.collectionGroup(collectionId),
+    where,
+    orderBy,
+    limit,
+    offset,
+    select,
+  );
+
+  const snapshot = await query.get();
+  return snapshot.docs.map(serializeDocument);
+}
+
 export async function getDocumentDeep(
   firestore: Firestore,
   documentPath: string,
