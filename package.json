@@ -1,0 +1,38 @@
+{
+  "name": "firestore-cli",
+  "version": "0.1.0",
+  "description": "A clean, read-only CLI for exploring Firestore databases.",
+  "type": "module",
+  "bin": {
+    "firestore": "./dist/firestore.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsx src/bin/firestore.ts",
+    "lint": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "firestore",
+    "cli",
+    "typescript"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@google-cloud/firestore": "^7.11.2",
+    "commander": "^13.1.0",
+    "env-paths": "^3.0.0",
+    "picocolors": "^1.1.1",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "tsup": "^8.5.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.2"
+  }
+}
