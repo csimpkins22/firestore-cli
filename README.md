@@ -162,6 +162,16 @@ The CLI stores profiles in the OS config directory resolved by `env-paths("fires
 - Linux: `~/.config/firestore-cli/config.json`
 - Windows: `%APPDATA%/firestore-cli/config.json`
 
+## Claude Code skill
+
+A Claude Code skill is included in `skills/firestore/`. To install it, copy it to your Claude skills directory:
+
+```bash
+cp -r skills/firestore ~/.claude/skills/firestore
+```
+
+This lets Claude Code use the `firestore` CLI directly via the `/firestore` slash command to explore your Firestore databases.
+
 ## Current limitations
 
 - Read-only by design in v1
