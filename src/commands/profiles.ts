@@ -28,35 +28,35 @@ export function registerProfileCommands(program: Command): void {
       renderProfiles(config, { json: command.optsWithGlobals<{ json?: boolean }>().json });
     });
 
-  profiles.command("list").action(async (_: void, command: Command) => {
+  profiles.command("list").action(async function (this: Command) {
     const config = await loadConfig();
-    renderProfiles(config, { json: command.optsWithGlobals<{ json?: boolean }>().json });
+    renderProfiles(config, { json: this.optsWithGlobals<{ json?: boolean }>().json });
   });
 
   profiles
     .command("show")
     .argument("[name]", "Profile name")
-    .action(async (name: string | undefined, command: Command) => {
-      const resolved = await resolveProfile(name ?? command.optsWithGlobals<{ profile?: string }>().profile);
+    .action(async function (this: Command, name: string | undefined) {
+      const resolved = await resolveProfile(name ?? this.optsWithGlobals<{ profile?: string }>().profile);
       renderProfileDetail(resolved.name, resolved.profile, {
-        json: command.optsWithGlobals<{ json?: boolean }>().json,
+        json: this.optsWithGlobals<{ json?: boolean }>().json,
       });
     });
 
   profiles
     .command("use")
     .argument("<name>", "Profile name")
-    .action(async (name: string, command: Command) => {
+    .action(async function (this: Command, name: string) {
       const config = await setDefaultProfile(name);
-      renderProfiles(config, { json: command.optsWithGlobals<{ json?: boolean }>().json });
+      renderProfiles(config, { json: this.optsWithGlobals<{ json?: boolean }>().json });
     });
 
   profiles
     .command("remove")
     .argument("<name>", "Profile name")
-    .action(async (name: string, command: Command) => {
+    .action(async function (this: Command, name: string) {
       const config = await removeProfile(name);
-      renderProfiles(config, { json: command.optsWithGlobals<{ json?: boolean }>().json });
+      renderProfiles(config, { json: this.optsWithGlobals<{ json?: boolean }>().json });
     });
 }
 

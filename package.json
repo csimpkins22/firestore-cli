@@ -1,5 +1,5 @@
 {
-  "name": "firestore-cli",
+  "name": "@csimpkins22/firestore-cli",
   "version": "0.1.0",
   "description": "A clean, read-only CLI for exploring Firestore databases.",
   "type": "module",
@@ -21,6 +21,15 @@
     "typescript"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/csimpkins22/firestore-cli.git"
+  },
+  "homepage": "https://github.com/csimpkins22/firestore-cli",
+  "bugs": "https://github.com/csimpkins22/firestore-cli/issues",
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "@google-cloud/firestore": "^7.11.2",
     "commander": "^13.1.0",

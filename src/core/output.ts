@@ -3,7 +3,7 @@ import { writeFile } from "node:fs/promises";
 import pc from "picocolors";
 
 import { getConfigPath } from "./config.js";
-import type { FirestoreCliConfig, FirestoreProfile, SerializedDocument } from "./types.js";
+import type { DeepDocument, FirestoreCliConfig, FirestoreProfile, SerializedDocument } from "./types.js";
 
 export interface OutputOptions {
   json?: boolean;
@@ -69,6 +69,27 @@ export function renderQueryResults(
     },
     options,
     `Query Results: ${collectionPath}`,
+  );
+}
+
+export function renderDeepDocument(document: DeepDocument, options: OutputOptions): void {
+  emit(document, options, `Document: ${document.path} (deep)`);
+}
+
+export async function writeDocumentJson(
+  outputPath: string,
+  document: SerializedDocument | DeepDocument,
+): Promise<void> {
+  const payload = JSON.stringify(document, null, 2);
+
+  if (outputPath === "-") {
+    process.stdout.write(`${payload}\n`);
+    return;
+  }
+
+  await writeFile(outputPath, `${payload}\n`, "utf8");
+  process.stderr.write(
+    `${pc.green("Wrote")} ${document.path} to ${outputPath}\n`,
   );
 }
 

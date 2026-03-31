@@ -2,7 +2,7 @@ import { Firestore, type CollectionReference, type DocumentData, type DocumentSn
 
 import type { ParsedOrderBy, ParsedWhere } from "../cli/options.js";
 import { FirestoreCommandError } from "./errors.js";
-import type { FirestoreProfile, SerializedDocument } from "./types.js";
+import type { DeepDocument, FirestoreProfile, SerializedDocument } from "./types.js";
 
 export function createFirestoreClient(profile: FirestoreProfile): Firestore {
   if (profile.mode === "emulator") {
@@ -106,6 +106,33 @@ export async function runQuery(
 
   const snapshot = await query.get();
   return snapshot.docs.map(serializeDocument);
+}
+
+export async function getDocumentDeep(
+  firestore: Firestore,
+  documentPath: string,
+): Promise<DeepDocument> {
+  const snapshot = await firestore.doc(documentPath).get();
+  if (!snapshot.exists) {
+    throw new FirestoreCommandError(`Document "${documentPath}" was not found.`);
+  }
+
+  const collections = await firestore.doc(documentPath).listCollections();
+  const subcollections: Record<string, DeepDocument[]> = {};
+
+  await Promise.all(
+    collections.map(async (collectionRef) => {
+      const docsSnapshot = await collectionRef.get();
+      if (docsSnapshot.docs.length === 0) return;
+
+      const deepDocs = await Promise.all(
+        docsSnapshot.docs.map((doc) => getDocumentDeep(firestore, doc.ref.path)),
+      );
+      subcollections[collectionRef.id] = deepDocs;
+    }),
+  );
+
+  return { ...serializeDocument(snapshot), subcollections };
 }
 
 export function serializeDocument(snapshot: DocumentSnapshot<DocumentData>): SerializedDocument {

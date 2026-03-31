@@ -31,3 +31,7 @@ export interface SerializedDocument {
   path: string;
   updateTime?: string;
 }
+
+export interface DeepDocument extends SerializedDocument {
+  subcollections: Record<string, DeepDocument[]>;
+}

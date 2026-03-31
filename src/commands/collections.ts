@@ -11,8 +11,8 @@ export function registerCollectionsCommands(program: Command): void {
   collections
     .command("list")
     .argument("[documentPath]", "Document path whose subcollections should be listed")
-    .action(async (documentPath: string | undefined, command: Command) => {
-      const options = getGlobalOptions(command);
+    .action(async function (this: Command, documentPath: string | undefined) {
+      const options = getGlobalOptions(this);
       const { name, profile } = await resolveProfile(options.profile);
       const firestore = createFirestoreClient(profile);
       const result = await listCollections(firestore, documentPath);
