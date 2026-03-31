@@ -20,14 +20,17 @@ This CLI fills that gap with clean output, native query syntax, named profiles f
 ## Install
 
 ```bash
-npm install
-npm run build
+npm install -g @csimpkins22/firestore-cli
 ```
 
-For ad hoc usage during development:
+For development:
 
 ```bash
-npm run dev -- --help
+git clone https://github.com/csimpkins22/firestore-cli.git
+cd firestore-cli
+npm install
+npm run build
+npm install -g .
 ```
 
 ## Global options
