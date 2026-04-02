@@ -11,7 +11,7 @@ export function createProgram(): Command {
 
   program
     .name("firestore")
-    .description("A clean, read-only CLI for exploring Firestore databases.")
+    .description("A clean CLI for exploring and managing Firestore databases.")
     .showHelpAfterError()
     .option("--profile <name>", "Profile to use for Firestore commands")
     .option("--json", "Emit machine-readable JSON")

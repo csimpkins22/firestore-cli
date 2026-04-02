@@ -1,18 +1,20 @@
 # Firestore CLI
 
-`firestore-cli` is a clean, read-only Node.js CLI for exploring Firestore databases from the terminal.
+`firestore-cli` is a clean Node.js CLI for exploring and managing Firestore databases from the terminal.
 
 ## Why
 
 Neither `gcloud firestore` nor the Firebase CLI offer a good terminal experience for exploring Firestore data. `gcloud` supports basic document reads but uses verbose protobuf-style output, lacks field projection, can't list subcollections, and doesn't support native Firestore query operators. The Firebase CLI has no read/query commands at all — it's focused on deploy, emulators, and rules.
 
-This CLI fills that gap with clean output, native query syntax, named profiles for switching between projects, and recursive deep export of documents with their subcollections.
+This CLI fills that gap with clean output, native query syntax, named profiles for switching between projects, recursive deep export of documents with their subcollections, and lightweight document write operations for the cases where you need to create, update, or remove a document without leaving the terminal.
 
 ## Features
 
 - Named profiles for cloud and emulator targets
 - Root collection and subcollection listing
 - Direct document reads with recursive deep export of subcollections
+- Direct document writes with create, set, update, and delete commands
+- Dry-run support for document writes and deletes
 - Filtered, ordered, projected collection queries
 - JSON exports to stdout or files
 - Pretty terminal output by default, `--json` for machine-readable output
@@ -119,6 +121,50 @@ firestore doc get users/ada --deep --out ./ada.json
 
 The `--deep` flag recursively fetches all subcollections and nests them under a `subcollections` key. `--out` works with or without `--deep`.
 
+Create a document:
+
+```bash
+firestore doc create users/grace '{"name":"Grace Hopper","active":true}'
+```
+
+Overwrite a document:
+
+```bash
+firestore doc set users/grace '{"name":"Grace Hopper","team":"compiler"}'
+```
+
+Merge fields into an existing document:
+
+```bash
+firestore doc set users/grace '{"lastLogin":"2026-04-02T09:30:00Z"}' --merge
+```
+
+Update specific fields on an existing document:
+
+```bash
+firestore doc update users/grace '{"active":false}'
+```
+
+Preview a write without changing Firestore:
+
+```bash
+firestore doc update users/grace '{"active":true}' --dry-run
+```
+
+Delete a document:
+
+```bash
+firestore doc delete users/grace
+```
+
+Skip the delete confirmation prompt:
+
+```bash
+firestore doc delete users/grace --yes
+```
+
+`doc create`, `doc set`, and `doc update` require a JSON object argument. Arrays and primitives are rejected. `doc set --merge` preserves existing fields and merges the provided object. `doc create` fails if the document already exists, and `doc update` fails if it does not. `doc delete` prompts for confirmation unless you pass `--yes`. All write commands support `--dry-run`, and `--json` returns machine-readable write and dry-run output.
+
 Run a query:
 
 ```bash
@@ -174,7 +220,7 @@ This lets Claude Code use the `firestore` CLI directly via the `/firestore` slas
 
 ## Current limitations
 
-- Read-only by design in v1
 - Firestore Native mode only
+- No batch writes, transactions, or recursive delete helpers yet
 - No collection-group queries yet
 - No OAuth or interactive TUI flows

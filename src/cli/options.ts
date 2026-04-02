@@ -130,6 +130,21 @@ export function parseSelect(value?: string): string[] | undefined {
   return fields;
 }
 
+export function parseJsonData(input: string): Record<string, unknown> {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(input);
+  } catch {
+    throw new ValidationError(`Invalid JSON: ${input}`);
+  }
+
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new ValidationError("Expected a JSON object, not an array or primitive.");
+  }
+
+  return parsed as Record<string, unknown>;
+}
+
 export function parseLiteral(value: string): unknown {
   const trimmed = value.trim();
   if (trimmed.length === 0) {

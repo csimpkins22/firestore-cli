@@ -119,6 +119,27 @@ export async function writeExport(
   );
 }
 
+export function renderWriteResult(
+  operation: string,
+  documentPath: string,
+  options: OutputOptions,
+): void {
+  emit({ operation, documentPath }, options, `${operation}: ${documentPath}`);
+}
+
+export function renderDryRun(
+  operation: string,
+  documentPath: string,
+  data?: Record<string, unknown>,
+  options?: OutputOptions,
+): void {
+  const payload = data
+    ? { operation, documentPath, data }
+    : { operation, documentPath };
+
+  emit(payload, options ?? {}, `Dry run — ${operation}: ${documentPath}`);
+}
+
 function emit(value: unknown, options: OutputOptions, title: string): void {
   if (options.json) {
     process.stdout.write(`${JSON.stringify(value, null, 2)}\n`);

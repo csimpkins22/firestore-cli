@@ -157,6 +157,38 @@ export async function getDocumentDeep(
   return { ...serializeDocument(snapshot), subcollections };
 }
 
+export async function setDocument(
+  firestore: Firestore,
+  documentPath: string,
+  data: Record<string, unknown>,
+  merge?: boolean,
+): Promise<void> {
+  await firestore.doc(documentPath).set(data, merge ? { merge: true } : {});
+}
+
+export async function createDocument(
+  firestore: Firestore,
+  documentPath: string,
+  data: Record<string, unknown>,
+): Promise<void> {
+  await firestore.doc(documentPath).create(data);
+}
+
+export async function updateDocument(
+  firestore: Firestore,
+  documentPath: string,
+  data: Record<string, unknown>,
+): Promise<void> {
+  await firestore.doc(documentPath).update(data);
+}
+
+export async function deleteDocument(
+  firestore: Firestore,
+  documentPath: string,
+): Promise<void> {
+  await firestore.doc(documentPath).delete();
+}
+
 export function serializeDocument(snapshot: DocumentSnapshot<DocumentData>): SerializedDocument {
   return {
     createTime: snapshot.createTime?.toDate().toISOString(),
